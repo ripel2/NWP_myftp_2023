@@ -7,5 +7,10 @@
 
 #pragma once
 
+#include <netinet/in.h>
+#include <stdbool.h>
+
+// Main functions
+
 int myftp(char *, char *);
 int check_args(int, char **);

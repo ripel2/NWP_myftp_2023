@@ -6,10 +6,14 @@
 */
 
 #include "myftp.h"
+#include "server.h"
 
 int myftp(char *port, char *path)
 {
-    (void)port;
-    (void)path;
+    server_t server;
+
+    init_server(&server, port, path);
+    server_loop(&server);
+    destroy_server(&server);
     return 0;
 }

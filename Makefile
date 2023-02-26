@@ -20,7 +20,15 @@ NAME		=	myftp
 MAIN		=	src/main.c
 
 SRC			=	src/myftp.c	\
-				src/arg_check.c
+				src/arg_check.c	\
+				src/logger/logger.c	\
+				src/client/add_client.c	\
+				src/client/remove_client.c	\
+				src/client/client_count.c	\
+				src/server/init_server.c	\
+				src/server/destroy_server.c	\
+				src/server/handle_clients.c	\
+				src/server/server_loop.c
 
 TESTS		=
 

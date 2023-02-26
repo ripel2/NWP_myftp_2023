@@ -22,8 +22,9 @@ typedef enum {
 void logger_printf(log_level_t, const char *, ...);
 void exit_fatal(const char *, ...);
 
-#define LOG_DEBUG(format, ...) logger(LOG_DEBUG, format, ##__VA_ARGS__)
-#define LOG_INFO(format, ...) logger(LOG_INFO, format, ##__VA_ARGS__)
-#define LOG_WARNING(format, ...) logger(LOG_WARNING, format, ##__VA_ARGS__)
-#define LOG_ERROR(format, ...) logger(LOG_ERROR, format, ##__VA_ARGS__)
-#define LOG_FATAL(format, ...) logger(LOG_FATAL, format, ##__VA_ARGS__)
+#define LOG_DEBUG(format, ...) logger_printf(LOG_DEBUG, format, ##__VA_ARGS__)
+#define LOG_INFO(format, ...) logger_printf(LOG_INFO, format, ##__VA_ARGS__)
+#define LOG_WARNING(format, ...) \
+    logger_printf(LOG_WARNING, format, ##__VA_ARGS__)
+#define LOG_ERROR(format, ...) logger_printf(LOG_ERROR, format, ##__VA_ARGS__)
+#define LOG_FATAL(format, ...) logger_printf(LOG_FATAL, format, ##__VA_ARGS__)

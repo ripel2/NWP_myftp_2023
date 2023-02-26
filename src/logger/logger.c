@@ -21,7 +21,7 @@ static void logger_print_time(void)
 
     gettimeofday(&tv, NULL);
     tm = localtime(&tv.tv_sec);
-    fprintf(stderr, "\033[1;90m[%02d:%02d:%02d.%3ld]\033[0m\t",
+    fprintf(stderr, "\033[1;90m[%02d:%02d:%02d.%03ld]\033[0m\t",
     tm->tm_hour, tm->tm_min, tm->tm_sec, tv.tv_usec / 1000);
 }
 
@@ -35,7 +35,7 @@ static void logger_print_level(log_level_t level)
             fprintf(stderr, "\033[1;96m[INFO]\033[0m\t");
             break;
         case LOG_WARNING:
-            fprintf(stderr, "\033[1;93m[WARNING]\033[0m\t");
+            fprintf(stderr, "\033[1;93m[WARN]\033[0m\t");
             break;
         case LOG_ERROR:
             fprintf(stderr, "\033[1;91m[ERROR]\033[0m\t");
@@ -50,6 +50,8 @@ void logger_printf(log_level_t level, const char *format, ...)
 {
     va_list args;
 
+    if (level == LOG_DEBUG && !PRINT_DEBUG)
+        return;
     logger_print_time();
     logger_print_level(level);
     va_start(args, format);

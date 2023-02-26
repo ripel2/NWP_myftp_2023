@@ -23,3 +23,5 @@ vgcore.*
 
 .*_history
 .less*
+
+*.log
