@@ -29,8 +29,11 @@ SRC			=	src/myftp.c	\
 				src/client/client_count.c	\
 				src/server/init_server.c	\
 				src/server/destroy_server.c	\
+				src/server/handle_client.c	\
 				src/server/handle_clients.c	\
-				src/server/server_loop.c
+				src/server/server_loop.c	\
+				src/commands/login.c	\
+				src/commands/parser.c	\
 
 TESTS		=
 

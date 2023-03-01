@@ -26,6 +26,9 @@ typedef struct server_s {
 } server_t;
 
 void init_server(server_t *, char *port, char *path);
+bool handle_client_read(server_t *, client_t *);
+void handle_client_write(server_t *, client_t *);
+
 void handle_clients(server_t *);
 void server_loop(server_t *);
 void destroy_server(server_t *);

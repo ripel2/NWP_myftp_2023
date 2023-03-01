@@ -44,7 +44,6 @@ static void select_and_accept(server_t *server)
         new_socket, inet_ntoa(server->addr.sin_addr),
         ntohs(server->addr.sin_port));
     server->max_fd = new_socket;
-    LOG_DEBUG("new socket is %d", new_socket);
     if (add_client(&server->clients, new_socket))
         welcome_client(server, server->clients);
 }
