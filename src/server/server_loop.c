@@ -21,10 +21,8 @@ static void create_file_descriptor_set(server_t *server)
     FD_ZERO(&server->write_fds);
     FD_SET(server->fd, &server->read_fds);
     FD_SET(server->fd, &server->write_fds);
-    server->max_fd = server->fd;
     for (; client; client = client->next) {
         FD_SET(client->fd, &server->read_fds);
-        FD_SET(client->fd, &server->write_fds);
     }
 }
 
@@ -45,9 +43,10 @@ static void select_and_accept(server_t *server)
     LOG_DEBUG("New connection, socket fd: %d, ip: %s, port: %d",
         new_socket, inet_ntoa(server->addr.sin_addr),
         ntohs(server->addr.sin_port));
-    if (new_socket > server->max_fd)
-        server->max_fd = new_socket;
-    add_client(&server->clients, new_socket);
+    server->max_fd = new_socket;
+    LOG_DEBUG("new socket is %d", new_socket);
+    if (add_client(&server->clients, new_socket))
+        welcome_client(server, server->clients);
 }
 
 void server_loop(server_t *server)

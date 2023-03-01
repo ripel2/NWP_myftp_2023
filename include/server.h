@@ -11,6 +11,9 @@
 
 #define LISTEN_BACKLOG 10
 
+typedef struct client_s client_t;
+typedef struct client_s *client_list_t;
+
 typedef struct server_s {
     int fd;
     int max_fd;

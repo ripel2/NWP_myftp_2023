@@ -24,6 +24,8 @@ SRC			=	src/myftp.c	\
 				src/logger/logger.c	\
 				src/client/add_client.c	\
 				src/client/remove_client.c	\
+				src/client/client_printf.c	\
+				src/client/welcome_client.c	\
 				src/client/client_count.c	\
 				src/server/init_server.c	\
 				src/server/destroy_server.c	\

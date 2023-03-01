@@ -10,9 +10,15 @@
 #include <netinet/in.h>
 #include <stdbool.h>
 
+#include "server.h"
+
 /* 1024 is the upper limit for select and fds 0, 1 and 2 cannot be used */
 /* thus the absolute maximum of clients is 1021 */
 #define MAX_CLIENTS __FD_SETSIZE - 3
+
+#define READ_BUFFER_SIZE 1024
+
+typedef struct server_s server_t;
 
 typedef enum transfer_type {
     NONE,
@@ -43,6 +49,7 @@ typedef struct client_s {
     void *transfer_socket;
     struct client_s *next;
     char *queued_message;
+    ssize_t queued_message_size;
 } client_t;
 
 typedef client_t *client_list_t;
@@ -51,3 +58,7 @@ size_t get_client_count(client_list_t);
 
 bool add_client(client_list_t *, int fd);
 bool remove_client(client_list_t *, int fd);
+
+ssize_t client_printf(client_t *, const char *, ...);
+
+void welcome_client(server_t *, client_t *);
