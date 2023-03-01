@@ -13,58 +13,58 @@
 #include <stdio.h>
 #include <unistd.h>
 
-static void read_client_line_finish(client_t *client, ssize_t ret)
+static bool read_client_line_finish(client_t *client, ssize_t ret)
 {
     while (ret == READ_BUFFER_SIZE) {
         client->buffer_size += ret;
         client->buffer = realloc(client->buffer,
         client->buffer_size + READ_BUFFER_SIZE + 1);
         if (client->buffer == NULL) {
-            client->buffer_size = 0;
-            return;
+            return false;
         }
         ret = read(client->fd,
         client->buffer + client->buffer_size, READ_BUFFER_SIZE);
         if (ret == -1) {
-            client->buffer_size = 0;
-            return;
+            client->buffer_size = -1;
+            return true;
         }
     }
     client->buffer_size += ret;
     client->buffer[client->buffer_size] = '\0';
+    return true;
 }
 
-static void read_client_line(client_t *client)
+static bool read_client_line(client_t *client)
 {
     ssize_t ret = 0;
 
     client->buffer_size = 0;
     if (client->buffer == NULL) {
         client->buffer = malloc(sizeof(char) * (READ_BUFFER_SIZE + 1));
-        if (client->buffer == NULL) {
-            client->buffer_size = 0;
-            return;
-        }
+        if (client->buffer == NULL)
+            return false;
     }
     ret = read(client->fd, client->buffer, READ_BUFFER_SIZE);
     if (ret == -1) {
-        client->buffer_size = 0;
-        return;
+        client->buffer_size = -1;
+        return true;
     }
-    read_client_line_finish(client, ret);
+    return read_client_line_finish(client, ret);
 }
 
 static void handle_client_read(server_t *server, client_t *client)
 {
     if (FD_ISSET(client->fd, &server->read_fds) == 0)
         return;
-    read_client_line(client);
-    if (client->buffer_size == -1) {
+    if (read_client_line(client) == false)
+        LOG_ERROR("malloc failed on client %d", client->fd);
+    if (client->buffer_size <= 0) {
         remove_client(&server->clients, client->fd);
         return;
     }
     LOG_DEBUG("Received %ld bytes from client %d", client->buffer_size,
     client->fd);
+    FD_CLR(client->fd, &server->read_fds);
 }
 
 static void handle_client_write(server_t *server, client_t *client)
@@ -85,9 +85,12 @@ static void handle_client_write(server_t *server, client_t *client)
 void handle_clients(server_t *server)
 {
     client_t *client = (client_t *)server->clients;
+    client_t *next = NULL;
 
-    for (; client != NULL; client = client->next) {
-        handle_client_read(server, client);
+    while (client != NULL) {
+        next = client->next;
         handle_client_write(server, client);
+        handle_client_read(server, client);
+        client = next;
     }
 }
