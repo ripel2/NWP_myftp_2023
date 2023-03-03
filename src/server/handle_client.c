@@ -82,6 +82,9 @@ bool handle_client_read(server_t *server, client_t *client)
     client->fd);
     FD_CLR(client->fd, &server->read_fds);
     handle_command(server, client);
+    free(client->buffer);
+    client->buffer = NULL;
+    client->buffer_size = 0;
     return false;
 }
 
