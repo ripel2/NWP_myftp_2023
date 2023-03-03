@@ -15,6 +15,7 @@ const char *COMMANDS[] = {
     "PASS",
     "NOOP",
     "PWD",
+    "CWD",
     NULL
 };
 
@@ -23,6 +24,7 @@ static void (*COMMANDS_FUNCS[])(server_t *server, client_t *client) = {
     &pass_command,
     &noop_command,
     &pwd_command,
+    &cwd_command,
     NULL
 };
 

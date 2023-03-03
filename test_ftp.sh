@@ -124,7 +124,6 @@ test00()
 }
 
 # Noop command
-
 test01()
 {
   local test_name="Noop"
@@ -144,6 +143,50 @@ test01()
   return
 }
 
+#Pwd command
+test02()
+{
+  local test_name="Pwd"
+  local user="USER Anonymous"
+  local pass="PASS"
+  local cmd="PWD"
+
+  launch_client $HOST $PORT
+  if [[ ! $? -eq 1 ]]; then
+    echo "KO"
+    kill_client
+    return
+  fi
+
+  launch_test "$test_name" "$user" 331
+  launch_test "$test_name" "$pass" 230
+  launch_test "$test_name" "$cmd" 257
+
+  print_succeeded "$test_name"
+  return
+}
+
+#Pwd command not logged in
+test03()
+{
+  local test_name="Pwd not logged in"
+  local cmd="PWD"
+
+  launch_client $HOST $PORT
+  if [[ ! $? -eq 1 ]]; then
+    echo "KO"
+    kill_client
+    return
+  fi
+
+  launch_test "$test_name" "$cmd" 530
+
+  print_succeeded "$test_name"
+  return
+}
+
 test00
 test01
+test02
+test03
 clean

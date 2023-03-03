@@ -16,6 +16,8 @@
 
 static void strip_line_end(client_t *client)
 {
+    if (client->buffer_size == 0)
+        return;
     if (client->buffer[client->buffer_size - 1] == '\n') {
         client->buffer[client->buffer_size - 1] = '\0';
         client->buffer_size--;
