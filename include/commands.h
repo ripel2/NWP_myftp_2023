@@ -14,5 +14,6 @@ extern const char *COMMANDS[];
 
 void user_command(server_t *, client_t *);
 void pass_command(server_t *, client_t *);
+void noop_command(server_t *, client_t *);
 
 void handle_command(server_t *, client_t *);

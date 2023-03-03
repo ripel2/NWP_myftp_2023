@@ -34,6 +34,7 @@ SRC			=	src/myftp.c	\
 				src/server/server_loop.c	\
 				src/commands/login.c	\
 				src/commands/parser.c	\
+				src/commands/noop.c	\
 
 TESTS		=
 
