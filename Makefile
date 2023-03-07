@@ -27,6 +27,7 @@ SRC			=	src/myftp.c	\
 				src/client/client_printf.c	\
 				src/client/welcome_client.c	\
 				src/client/client_count.c	\
+				src/client/passive_socket.c	\
 				src/server/init_server.c	\
 				src/server/destroy_server.c	\
 				src/server/handle_client.c	\
@@ -39,6 +40,7 @@ SRC			=	src/myftp.c	\
 				src/commands/cwd.c	\
 				src/commands/cdup.c	\
 				src/commands/help.c	\
+				src/commands/pasv.c	\
 
 TESTS		=	tests/tests_arg_check.c	\
 				tests/tests_parser.c	\

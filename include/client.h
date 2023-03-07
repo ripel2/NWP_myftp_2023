@@ -63,3 +63,9 @@ bool remove_client(client_list_t *, int fd);
 ssize_t client_printf(client_t *, const char *, ...);
 
 void welcome_client(server_t *, client_t *);
+
+passive_t *create_passive_socket(void);
+void destroy_passive_socket(passive_t *);
+
+active_t *create_active_socket(void);
+void destroy_active_socket(active_t *);

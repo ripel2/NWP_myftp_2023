@@ -21,5 +21,6 @@ void cwd_command(server_t *, client_t *);
 void cdup_command(server_t *, client_t *);
 void quit_command(server_t *, client_t *);
 void help_command(server_t *, client_t *);
+void pasv_command(server_t *, client_t *);
 
 void handle_command(server_t *, client_t *);
