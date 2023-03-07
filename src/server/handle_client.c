@@ -75,7 +75,7 @@ bool handle_client_read(server_t *server, client_t *client)
     if (read_client_line(client) == false)
         LOG_ERROR("malloc failed on client %d", client->fd);
     if (client->buffer_size <= 0) {
-        remove_client(&server->clients, client->fd);
+        client->needs_exit = true;
         return true;
     }
     LOG_DEBUG("Received %ld bytes from client %d", client->buffer_size,
