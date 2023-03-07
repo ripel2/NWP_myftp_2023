@@ -50,6 +50,7 @@ typedef struct client_s {
     struct client_s *next;
     char *queued_message;
     ssize_t queued_message_size;
+    bool needs_exit;
 } client_t;
 
 typedef client_t *client_list_t;

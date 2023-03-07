@@ -48,11 +48,29 @@ static void select_and_accept(server_t *server)
         welcome_client(server, server->clients);
 }
 
+static void remove_exit_clients(server_t *server)
+{
+    client_t *client = (client_t *)server->clients;
+    int fd = 0;
+    
+    while (client != NULL) {
+        if (client->needs_exit) {
+            LOG_DEBUG("Removing client %d", client->fd);
+            fd = client->fd;
+            client = client->next;
+            remove_client(&server->clients, fd);
+        }
+        if (client != NULL)
+            client = client->next;
+    }
+}
+
 void server_loop(server_t *server)
 {
     while (true) {
         create_file_descriptor_set(server);
         select_and_accept(server);
         handle_clients(server);
+        remove_exit_clients(server);
     }
 }

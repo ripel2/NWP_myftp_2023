@@ -22,6 +22,7 @@ static void init_client(client_t *client, int fd)
     client->transfer_socket = NULL;
     client->next = NULL;
     client->queued_message = NULL;
+    client->needs_exit = false;
 }
 
 bool add_client(client_list_t *list, int fd)

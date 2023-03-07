@@ -74,3 +74,12 @@ void pass_command(server_t *server, client_t *client)
     }
     pass_command_check_password(server, client, password);
 }
+
+void quit_command(server_t *server, client_t *client)
+{
+    FD_SET(client->fd, &server->write_fds);
+    LOG_INFO("Client %d sent QUIT command", client->fd);
+    client_printf(client, "%d %s.\r\n", 221,
+    "Service closing control connection");
+    client->needs_exit = true;
+}
