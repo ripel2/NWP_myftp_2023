@@ -242,6 +242,54 @@ class TestQuit2(Test):
         return True
 
 
+class TestHelp(Test):
+    NAME = "Test HELP command"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("HELP")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 214:
+            print("Test failed: HELP command did not return 214", file=sys.stderr)
+            return False
+
+        if "The following commands are recognized" not in data.decode("utf-8"):
+            print(
+                "Test failed: HELP command did not return the correct message",
+                file=sys.stderr,
+            )
+            return False
+        return True
+
+
+class TestHelp2(Test):
+    NAME = "Test HELP command with argument"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("HELP USER")
+        data = self.recv()
+        code = self.parse_code(data)
+
+        if code != 214:
+            print("Test failed: HELP command did not return 214", file=sys.stderr)
+            return False
+        
+        if "The following commands are recognized" in data.decode("utf-8"):
+            print(
+                "Test failed: HELP command returned the same message as without argument",
+                file=sys.stderr,
+            )
+            return False
+
+        return True
+
+
 TESTS = [
     TestConnection,
     TestUser,
@@ -254,6 +302,8 @@ TESTS = [
     TestCDUP,
     TestQuit,
     TestQuit2,
+    TestHelp,
+    TestHelp2,
 ]
 
 
