@@ -40,6 +40,5 @@ bool remove_client(client_list_t *list, int fd)
         }
         client = client->next;
     }
-    LOG_DEBUG("Client %d not found... what ??", fd);
     return false;
 }

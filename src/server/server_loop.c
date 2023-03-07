@@ -53,7 +53,7 @@ static void remove_exit_clients(server_t *server)
 {
     client_t *client = (client_t *)server->clients;
     int fd = 0;
-    
+
     while (client != NULL) {
         fd = 0;
         if (client->needs_exit) {
