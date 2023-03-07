@@ -38,6 +38,7 @@ SRC			=	src/myftp.c	\
 				src/commands/pwd.c	\
 				src/commands/cwd.c	\
 				src/commands/cdup.c	\
+				src/commands/help.c	\
 
 TESTS		=	tests/tests_arg_check.c	\
 				tests/tests_parser.c	\

@@ -18,6 +18,7 @@ const char *COMMANDS[] = {
     "CWD",
     "CDUP",
     "QUIT",
+    "HELP",
     NULL
 };
 
@@ -29,6 +30,7 @@ static void (*COMMANDS_FUNCS[])(server_t *server, client_t *client) = {
     &cwd_command,
     &cdup_command,
     &quit_command,
+    &help_command,
     NULL
 };
 

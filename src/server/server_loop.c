@@ -10,6 +10,7 @@
 #include "logger.h"
 
 #include <string.h>
+#include <unistd.h>
 #include <errno.h>
 #include <arpa/inet.h>
 
@@ -57,6 +58,9 @@ static void remove_exit_clients(server_t *server)
         if (client->needs_exit) {
             LOG_DEBUG("Removing client %d", client->fd);
             fd = client->fd;
+            close(fd);
+            FD_CLR(fd, &server->read_fds);
+            FD_CLR(fd, &server->write_fds);
             client = client->next;
             remove_client(&server->clients, fd);
         }
