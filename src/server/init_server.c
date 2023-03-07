@@ -29,11 +29,15 @@ static void init_server_default_values(server_t *server, char *port, char *path)
 void init_server(server_t *server, char *port, char *path)
 {
     struct sockaddr *addr = (struct sockaddr *)&server->addr;
+    int optval = 1;
 
     init_server_default_values(server, port, path);
     server->fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (server->fd < 0)
         exit_fatal("socket: %s", strerror(errno));
+    if (setsockopt(server->fd, SOL_SOCKET, SO_REUSEADDR, &optval,
+    sizeof(optval)) < 0)
+        exit_fatal("setsockopt: %s", strerror(errno));
     if (bind(server->fd, addr, server->addr_len) < 0)
         exit_fatal("bind: %s", strerror(errno));
     if (listen(server->fd, LISTEN_BACKLOG) < 0)

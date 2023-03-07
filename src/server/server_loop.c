@@ -55,10 +55,10 @@ static void remove_exit_clients(server_t *server)
     int fd = 0;
     
     while (client != NULL) {
+        fd = 0;
         if (client->needs_exit) {
             LOG_DEBUG("Removing client %d", client->fd);
             fd = client->fd;
-            close(fd);
             FD_CLR(fd, &server->read_fds);
             FD_CLR(fd, &server->write_fds);
             client = client->next;
@@ -66,6 +66,8 @@ static void remove_exit_clients(server_t *server)
         }
         if (client != NULL)
             client = client->next;
+        if (fd > 0 && close(fd) < 0)
+            LOG_WARNING("close: %s", strerror(errno));
     }
 }
 
