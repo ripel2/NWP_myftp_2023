@@ -39,7 +39,15 @@ SRC			=	src/myftp.c	\
 				src/commands/cwd.c	\
 				src/commands/cdup.c	\
 
-TESTS		=
+TESTS		=	tests/tests_arg_check.c	\
+				tests/tests_parser.c	\
+				tests/tests_user_command.c	\
+				tests/tests_pass_command.c	\
+				tests/tests_quit_command.c	\
+				tests/tests_pwd_command.c	\
+				tests/tests_cwd_command.c	\
+				tests/tests_client.c	\
+				tests/tests_server.c	\
 
 OBJ			=	$(SRC:%.c=%.o) $(MAIN:%.c=%.o)
 

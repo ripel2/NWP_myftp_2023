@@ -31,6 +31,20 @@ Test(check_args, invalid_port) {
     cr_assert_eq(check_args(ac, av), 84);
 }
 
+Test(check_args, invalid_port_2) {
+    char *av[] = {"./myftp", "42i", "/", NULL};
+    int ac = 3;
+
+    cr_assert_eq(check_args(ac, av), 84);
+}
+
+Test(check_args, invalid_port_3) {
+    char *av[] = {"./myftp", "50)", "/", NULL};
+    int ac = 3;
+
+    cr_assert_eq(check_args(ac, av), 84);
+}
+
 Test(check_args, invalid_path) {
     char *av[] = {"./myftp", "4242", "tom", NULL};
     int ac = 3;
