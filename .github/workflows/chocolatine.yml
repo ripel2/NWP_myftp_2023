@@ -91,11 +91,31 @@ jobs:
         run: make tests_run
         timeout-minutes: 2
 
+  run_functionnal_tests:
+    name: Run the program functionnal tests (using the python script)
+    runs-on: ubuntu-latest
+    needs: [check_program_compilation]
+    container: epitechcontent/epitest-docker:latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Compile executable and start tests
+        run: |
+          make
+          ./myftp 4242 $(pwd) &
+          serverPid=$!
+          python3 test_ftp.py 127.0.0.1 4242
+          kill $serverPid
+        timeout-minutes: 5
+
   push_to_mirror:
     name: Pushes the current repository files to a given mirror repository
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'push' }}
-    needs: [run_tests]
+    needs: [run_tests, run_functionnal_tests]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

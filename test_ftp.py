@@ -5,16 +5,17 @@ import os
 import sys
 import socket
 
+HOST = '127.0.0.1'
+PORT = 4242
+
 class Test:
-    HOST = '127.0.0.1'
-    PORT = 4242
     HOME_PATH = './'
 
     NAME = 'Test'
 
     def __init__(self):
         self._socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self._socket.connect((self.HOST, self.PORT))
+        self._socket.connect((HOST, PORT))
         data = self.recv()
         if self.parse_code(data) != 220:
             raise Exception("Connection failed")
@@ -214,6 +215,13 @@ TESTS = [
 
 
 if __name__ == '__main__':
+    if len(sys.argv) != 3:
+        print("Usage: python3 test.py <ip> <port>")
+        sys.exit(1)
+    
+    HOST = sys.argv[1]
+    PORT = int(sys.argv[2])
+
     passed = 0
     failed = 0
     for test in TESTS:
