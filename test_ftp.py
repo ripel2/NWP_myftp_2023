@@ -288,7 +288,37 @@ class TestHelp2(Test):
             return False
 
         return True
+    
 
+class TestPasv(Test):
+    NAME = "Test PASV command"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227", file=sys.stderr)
+            return False
+
+        return True
+
+
+class TestPasv2(Test):
+    NAME = "Test PASV command without being logged in"
+
+    def run_test(self) -> bool:
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 530:
+            print("Test failed: PASV command did not return 530", file=sys.stderr)
+            return False
+
+        return True
 
 TESTS = [
     TestConnection,
@@ -304,6 +334,8 @@ TESTS = [
     TestQuit2,
     TestHelp,
     TestHelp2,
+    TestPasv,
+    TestPasv2,
 ]
 
 
