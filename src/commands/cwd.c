@@ -83,7 +83,8 @@ void cwd_inner(server_t *server, client_t *client, int return_code)
         return;
     }
     LOG_DEBUG("Client %d sent CWD command", client->fd);
-    if (client->buffer[3] != ' ') {
+    if (client->buffer[3] != ' ' ||
+    (strcspn(client->buffer + 4, "\r\n\t ") == 0)) {
         client_printf(client, "%d %s.\r\n", 501,
         "Invalid arguments");
         return;
