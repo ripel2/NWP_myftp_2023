@@ -16,6 +16,7 @@ void user_command(server_t *, client_t *);
 void pass_command(server_t *, client_t *);
 void noop_command(server_t *, client_t *);
 void pwd_command(server_t *, client_t *);
+void cwd_inner(server_t *, client_t *, int);
 void cwd_command(server_t *, client_t *);
 void cdup_command(server_t *, client_t *);
 

@@ -33,7 +33,7 @@ static void resolve_dir(client_t *client, char *path)
     client->path = real_path;
 }
 
-static void cwd_change_dir(client_t *client, char *path)
+static void cwd_change_dir(client_t *client, char *path, int return_code)
 {
     struct stat st;
 
@@ -50,12 +50,12 @@ static void cwd_change_dir(client_t *client, char *path)
     free(client->path);
     client->path = path;
     resolve_dir(client, path);
-    client_printf(client, "%d %s.\r\n", 250,
+    client_printf(client, "%d %s.\r\n", return_code,
     "Requested file action okay, completed");
     LOG_INFO("Client %d changed directory to %s", client->fd, client->path);
 }
 
-static void cwd_create_path(client_t *client, char *path)
+static void cwd_create_path(client_t *client, char *path, int return_code)
 {
     char *new_path = NULL;
 
@@ -71,10 +71,10 @@ static void cwd_create_path(client_t *client, char *path)
         client_printf(client, "%d %s.\r\n", 550, "Failed to change directory");
         return;
     }
-    cwd_change_dir(client, new_path);
+    cwd_change_dir(client, new_path, return_code);
 }
 
-void cwd_command(server_t *server, client_t *client)
+void cwd_inner(server_t *server, client_t *client, int return_code)
 {
     FD_SET(client->fd, &server->write_fds);
     if (!client->logged_in) {
@@ -88,5 +88,10 @@ void cwd_command(server_t *server, client_t *client)
         "Invalid arguments");
         return;
     }
-    cwd_create_path(client, client->buffer + 4);
+    cwd_create_path(client, client->buffer + 4, return_code);
+}
+
+void cwd_command(server_t *server, client_t *client)
+{
+    cwd_inner(server, client, 250);
 }

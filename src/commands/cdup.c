@@ -22,5 +22,5 @@ void cdup_command(server_t *server, client_t *client)
     client->buffer = strdup("CWD ..");
     client->buffer_size = 7;
     LOG_INFO("Client %d sent CDUP command, running as CWD", client->fd);
-    cwd_command(server, client);
+    cwd_inner(server, client, 200);
 }
