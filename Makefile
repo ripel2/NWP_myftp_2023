@@ -51,6 +51,7 @@ TESTS		=	tests/tests_arg_check.c	\
 				tests/tests_quit_command.c	\
 				tests/tests_pwd_command.c	\
 				tests/tests_cwd_command.c	\
+				tests/tests_help_command.c	\
 				tests/tests_client.c	\
 				tests/tests_server.c	\
 
