@@ -157,3 +157,18 @@ Test(cwd_command, no_args_2) {
     cwd_command(&server, &client);
     cr_assert_eq(strncmp(client.queued_message, "501", 3), 0);
 }
+
+Test(cwd_command, no_args_3) {
+    server_t server = {0};
+    client_t client = {0};
+
+    server.clients = &client;
+    client.fd = 0;
+    client.buffer = strdup("CWD  ");
+    client.path = strdup("/");
+    client.username = strdup("Anonymous");
+    client.logged_in = true;
+    client.buffer_size = 4;
+    cwd_command(&server, &client);
+    cr_assert_eq(strncmp(client.queued_message, "550", 3), 0);
+}
