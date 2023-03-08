@@ -34,6 +34,7 @@ SRC			=	src/myftp.c	\
 				src/server/handle_clients.c	\
 				src/server/server_loop.c	\
 				src/commands/login.c	\
+				src/commands/file_utils.c	\
 				src/commands/parser.c	\
 				src/commands/noop.c	\
 				src/commands/pwd.c	\
@@ -41,6 +42,7 @@ SRC			=	src/myftp.c	\
 				src/commands/cdup.c	\
 				src/commands/help.c	\
 				src/commands/pasv.c	\
+				src/commands/dele.c	\
 
 TESTS		=	tests/tests_arg_check.c	\
 				tests/tests_parser.c	\
