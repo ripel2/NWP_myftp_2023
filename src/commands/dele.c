@@ -41,7 +41,7 @@ static void dele_delete_file(client_t *client, char *path)
 
 void dele_command(server_t *server, client_t *client)
 {
-    char path[PATH_MAX];
+    char path[PATH_MAX + 1] = {0};
 
     FD_SET(client->fd, &server->write_fds);
     if (client->username == NULL) {
@@ -55,6 +55,6 @@ void dele_command(server_t *server, client_t *client)
         client_printf(client, "%d %s.\r\n", 501, "Invalid arguments");
         return;
     }
-    sprintf(path, "%s/%s", client->path, client->buffer + 5);
+    snprintf(path, PATH_MAX, "%s/%s", client->path, client->buffer + 5);
     dele_delete_file(client, path);
 }
