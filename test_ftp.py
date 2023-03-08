@@ -320,6 +320,59 @@ class TestPasv2(Test):
 
         return True
 
+class TestDele(Test):
+    NAME = "Test DELE command"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+        
+        with open("test.txt", "w") as f:
+            f.write("test")
+        self.send_command("DELE ./test.txt")
+        data = self.recv()
+        code = self.parse_code(data)
+        os.system("rm test.txt -f")
+        if code != 250:
+            print("Test failed: DELE command did not return 250", file=sys.stderr)
+            return False
+
+        return True
+
+
+class TestDele2(Test):
+    NAME = "Test DELE command with a file that does not exist"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        os.system("rm test.txt -f")
+        self.send_command("DELE ./test.txt")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 550:
+            print("Test failed: DELE command did not return 550", file=sys.stderr)
+            return False
+
+        return True
+    
+
+class TestDele3(Test):
+    NAME = "Test DELE command without being logged in"
+
+    def run_test(self) -> bool:
+        os.system("rm test.txt -f")
+        self.send_command("DELE ./test.txt")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 530:
+            print("Test failed: DELE command did not return 530", file=sys.stderr)
+            return False
+
+        return True
+
+
 TESTS = [
     TestConnection,
     TestUser,
@@ -336,6 +389,9 @@ TESTS = [
     TestHelp2,
     TestPasv,
     TestPasv2,
+    TestDele,
+    TestDele2,
+    TestDele3,
 ]
 
 
