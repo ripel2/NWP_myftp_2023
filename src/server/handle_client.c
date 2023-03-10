@@ -94,11 +94,9 @@ bool handle_client_read(server_t *server, client_t *client)
 void handle_client_write(server_t *server, client_t *client)
 {
     if (FD_ISSET(client->fd, &server->write_fds) == 0) {
-        LOG_DEBUG("Client %d is not ready to write", client->fd);
         return;
     }
     if (client->queued_message == NULL) {
-        LOG_DEBUG("Client %d has no message to send", client->fd);
         return;
     }
     LOG_DEBUG("Sending %ld bytes to client %d", client->queued_message_size,

@@ -35,18 +35,6 @@ static void create_port_struct(client_t *client, int *ip, int *port)
     ip, cport);
 }
 
-static bool port_parse_buffer(int *ip, int *port, client_t *client)
-{
-    if (sscanf(client->buffer, "PORT %d,%d,%d,%d,%d,%d",
-    &ip[0], &ip[1], &ip[2], &ip[3], &port[0], &port[1]) != 6) {
-        client_printf(client, "%d %s.\r\n", 501, "Invalid arguments");
-        LOG_DEBUG("Client %d sent invalid arguments for PORT command",
-        client->fd);
-        return false;
-    }
-    return true;
-}
-
 void port_command(server_t *server, client_t *client)
 {
     int ip[4] = {0};
@@ -64,7 +52,12 @@ void port_command(server_t *server, client_t *client)
         client->fd);
         return;
     }
-    if (port_parse_buffer(ip, port, client) == false)
+    if (sscanf(client->buffer, "PORT %d,%d,%d,%d,%d,%d",
+    &ip[0], &ip[1], &ip[2], &ip[3], &port[0], &port[1]) != 6) {
+        client_printf(client, "%d %s.\r\n", 501, "Invalid arguments");
+        LOG_DEBUG("Client %d sent invalid arguments for PORT command",
+        client->fd);
         return;
+    }
     create_port_struct(client, ip, port);
 }

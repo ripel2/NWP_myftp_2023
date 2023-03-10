@@ -39,6 +39,10 @@ static void (*COMMANDS_FUNCS[])(server_t *server, client_t *client) = {
     &help_command,
     &dele_command,
     &pasv_command,
+    &retr_command,
+    &stor_command,
+    &list_command,
+    &port_command,
     NULL
 };
 
