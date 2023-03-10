@@ -5,6 +5,8 @@ import os
 import sys
 import socket
 
+from typing import Optional, Tuple
+
 HOST = "127.0.0.1"
 PORT = 4242
 
@@ -387,6 +389,143 @@ class TestBufferManagment(Test):
         return True
 
 
+class TestPasvABC(Test):
+    def parse_pasv(self, data: bytes) -> Optional[Tuple[str, int]]:
+        data = data.decode("utf-8")
+        data = data.split("(")[1].split(")")[0].split(",")
+        if len(data) != 6:
+            return None
+        try:
+            port = int(data[4]) * 256 + int(data[5])
+            if port < 0 or port > 65535:
+                return None
+        except ValueError:
+            return None
+        return ".".join(data[:4]), port
+
+
+class TestPasv(TestPasvABC):
+    NAME = "Test PASV command"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227", file=sys.stderr)
+            return False
+        
+        if not self.parse_pasv(data):
+            print("Test failed: PASV command did not return a valid address", file=sys.stderr)
+            return False
+
+        return True
+    
+
+class TestPasv2(TestPasvABC):
+    NAME = "Test PASV command without being logged in"
+
+    def run_test(self) -> bool:
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 530:
+            print("Test failed: PASV command did not return 530", file=sys.stderr)
+            return False
+
+        return True
+    
+
+class TestPasv3(TestPasvABC):
+    NAME = "Test PASV socket"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227", file=sys.stderr)
+            return False
+        
+        try:
+            ip, port = self.parse_pasv(data)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            s.close()
+
+        except ValueError:
+            print("Test failed: PASV command did not return a valid address", file=sys.stderr)
+            return False
+
+        return True
+
+
+class TestPortABC(Test):
+    def start_socket(self, ip, port) -> socket.socket:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.bind((ip, port))
+        s.listen(1)
+        return s
+    
+
+class TestPort(TestPortABC):
+    NAME = "Test PORT command"
+
+    def run_test(self) -> bool:
+        socket = self.start_socket("127.0.0.1", 4269)
+    
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PORT 127,0,0,1,16,173")
+        data = self.recv()
+        code = self.parse_code(data)
+
+        if code != 200:
+            print("Test failed: PORT command did not return 200", file=sys.stderr)
+            return False
+
+        return True
+    
+
+class TestPort2(TestPortABC):
+    NAME = "Test PORT command without being logged in"
+
+    def run_test(self) -> bool:
+        self.send_command("PORT 127,0,0,1,16,173")
+        data = self.recv()
+        code = self.parse_code(data)
+
+        if code != 530:
+            print("Test failed: PORT command did not return 530", file=sys.stderr)
+            return False
+        
+        return True
+    
+
+class TestPort3(TestPortABC):
+    NAME = "Test PORT without socket"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+        
+        self.send_command("PORT 127,0,0,1,16,173")
+        data = self.recv()
+        code = self.parse_code(data)
+        
+        if code != 425:
+            print("Test failed: PORT command did not return 425", file=sys.stderr)
+            return False
+        
+        return True
+
 TESTS = [
     TestConnection,
     TestUser,
@@ -407,6 +546,12 @@ TESTS = [
     TestDele2,
     TestDele3,
     TestBufferManagment,
+    TestPasv,
+    TestPasv2,
+    TestPasv3,
+    TestPort,
+    TestPort2,
+    TestPort3,
 ]
 
 
