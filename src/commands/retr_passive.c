@@ -17,7 +17,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-static void retr_thread_select_send(client_t *client, char *buffer)
+static void retr_active_thread_send(client_t *client, char *buffer)
 {
     fd_set write_fds = {0};
     int ret = 0;
@@ -42,7 +42,7 @@ static void retr_passive_transfer(client_t *client, int ns)
 
     if (fd < 0) {
         LOG_ERROR("Failed to open file");
-        retr_thread_select_send(client, "550 Failed to open file.\r\n");
+        retr_active_thread_send(client, "550 Failed to open file.\r\n");
         exit(0);
     }
     ret = read(fd, buffer, 1024);
@@ -51,7 +51,7 @@ static void retr_passive_transfer(client_t *client, int ns)
         memset(buffer, 0, 1024);
         ret = read(fd, buffer, 1024);
     }
-    retr_thread_select_send(client,
+    retr_active_thread_send(client,
     "226 Closing data connection, file transfer successful.\r\n");
 }
 
@@ -69,6 +69,7 @@ void retr_command_passive(server_t *server, client_t *client)
         return;
     }
     if (pid == 0) {
+        chdir(client->path);
         new_socket = accept(passive->fd, (struct sockaddr *)&passive->addr,
         (socklen_t *)&passive->addr_len);
         retr_passive_transfer(client, new_socket);
