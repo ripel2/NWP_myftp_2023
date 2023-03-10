@@ -528,6 +528,97 @@ class TestPort3(TestPortABC):
         
         return True
 
+
+class TestRetr(TestPasvABC):
+    NAME = "Test RETR command"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        with open("test.txt", "w") as f:
+            f.write("c'est la kiffance")
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227")
+            return False
+        
+        try:
+            ip, port = self.parse_pasv(data)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            self.send_command("RETR ./test.txt")
+            data = self.recv()
+            code = self.parse_code(data)
+            if code != 150:
+                print("Test failed: RETR command did not return 150")
+                return False
+            data = s.recv(1024)
+            if data != b"c'est la kiffance":
+                print("Test failed: RETR command did not return the right data")
+                return False
+            s.close()
+        
+        except ValueError:
+            print("Test failed: PASV command did not return a valid address")
+            return False
+        
+        finally:
+            os.remove("test.txt")
+
+        return True
+    
+
+class TestRetr2(TestPasvABC):
+    NAME = "Test RETR command without being logged in"
+
+    def run_test(self) -> bool:
+        self.send_command("RETR ./test.txt")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 530:
+            print("Test failed: RETR command did not return 530")
+            return False
+        
+        return True
+    
+
+class TestRetr3(TestPasvABC):
+    NAME = "Test RETR command with a file that does not exist"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227")
+            return False
+        
+        try:
+            ip, port = self.parse_pasv(data)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            self.send_command("RETR ./test.txt")
+            data = self.recv()
+            code = self.parse_code(data)
+            if code != 550:
+                print("Test failed: RETR command did not return 550")
+                return False
+            s.close()
+        
+        except ValueError:
+            print("Test failed: PASV command did not return a valid address")
+            return False
+
+        return True
+
+
 TESTS = [
     TestConnection,
     TestUser,
@@ -554,6 +645,9 @@ TESTS = [
     TestPort,
     TestPort2,
     TestPort3,
+    TestRetr,
+    TestRetr2,
+    TestRetr3,
 ]
 
 
