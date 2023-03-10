@@ -61,7 +61,7 @@ class TestUser(Test):
         self.send_command("USER Anonymous")
         data = self.recv()
         if self.parse_code(data) != 331:
-            print("Test failed: USER command did not return 331", file=sys.stderr)
+            print("Test failed: USER command did not return 331")
             return False
         return True
 
@@ -76,7 +76,7 @@ class TestPass(Test):
         self.send_command("PASS ")
         data = self.recv()
         if self.parse_code(data) != 230:
-            print("Test failed: PASS command did not return 230", file=sys.stderr)
+            print("Test failed: PASS command did not return 230")
             return False
 
         return True
@@ -92,7 +92,7 @@ class TestPwd1(Test):
         self.send_command("PWD")
         data = self.recv()
         if self.parse_code(data) != 257:
-            print("Test failed: PWD command did not return 257", file=sys.stderr)
+            print("Test failed: PWD command did not return 257")
             return False
         if not "is current directory" in data.decode("utf-8"):
             print(
@@ -111,10 +111,10 @@ class TestPwd2(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code == 257:
-            print("Test failed: PWD command should not return 257", file=sys.stderr)
+            print("Test failed: PWD command should not return 257")
             return False
         elif code != 530:
-            print("Test failed: PWD command did not return 530", file=sys.stderr)
+            print("Test failed: PWD command did not return 530")
             return False
         return True
 
@@ -129,7 +129,7 @@ class TestNOOP(Test):
         self.send_command("NOOP")
         data = self.recv()
         if self.parse_code(data) != 200:
-            print("Test failed: NOOP command did not return 200", file=sys.stderr)
+            print("Test failed: NOOP command did not return 200")
             return False
 
         return True
@@ -143,10 +143,10 @@ class TestCwd1(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code == 250:
-            print("Test failed: CWD command should not return 250", file=sys.stderr)
+            print("Test failed: CWD command should not return 250")
             return False
         elif code != 530:
-            print("Test failed: CWD command did not return 530", file=sys.stderr)
+            print("Test failed: CWD command did not return 530")
             return False
         return True
 
@@ -162,14 +162,14 @@ class TestCwd2(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code != 250:
-            print("Test failed: CWD command did not return 250", file=sys.stderr)
+            print("Test failed: CWD command did not return 250")
             return False
 
         self.send_command("PWD")
         data = self.recv()
         code = self.parse_code(data)
         if code != 257:
-            print("Test failed: PWD command did not return 257", file=sys.stderr)
+            print("Test failed: PWD command did not return 257")
             return False
 
         if not '/tests"' in data.decode("utf-8"):
@@ -193,21 +193,21 @@ class TestCDUP(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code != 250:
-            print("Test failed: CWD command did not return 250", file=sys.stderr)
+            print("Test failed: CWD command did not return 250")
             return False
 
         self.send_command("CDUP")
         data = self.recv()
         code = self.parse_code(data)
         if code != 200:
-            print("Test failed: CDUP command did not return 200", file=sys.stderr)
+            print("Test failed: CDUP command did not return 200")
             return False
 
         self.send_command("PWD")
         data = self.recv()
         code = self.parse_code(data)
         if code != 257:
-            print("Test failed: PWD command did not return 257", file=sys.stderr)
+            print("Test failed: PWD command did not return 257")
             return False
 
         return True
@@ -224,7 +224,7 @@ class TestQuit(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code != 221:
-            print("Test failed: QUIT command did not return 221", file=sys.stderr)
+            print("Test failed: QUIT command did not return 221")
             return False
 
         return True
@@ -238,7 +238,7 @@ class TestQuit2(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code != 221:
-            print("Test failed: QUIT command did not return 221", file=sys.stderr)
+            print("Test failed: QUIT command did not return 221")
             return False
 
         return True
@@ -255,7 +255,7 @@ class TestHelp(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code != 214:
-            print("Test failed: HELP command did not return 214", file=sys.stderr)
+            print("Test failed: HELP command did not return 214")
             return False
 
         if "The following commands are recognized" not in data.decode("utf-8"):
@@ -279,7 +279,7 @@ class TestHelp2(Test):
         code = self.parse_code(data)
 
         if code != 214:
-            print("Test failed: HELP command did not return 214", file=sys.stderr)
+            print("Test failed: HELP command did not return 214")
             return False
         
         if "The following commands are recognized" in data.decode("utf-8"):
@@ -303,7 +303,7 @@ class TestPasv(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code != 227:
-            print("Test failed: PASV command did not return 227", file=sys.stderr)
+            print("Test failed: PASV command did not return 227")
             return False
 
         return True
@@ -317,7 +317,7 @@ class TestPasv2(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code != 530:
-            print("Test failed: PASV command did not return 530", file=sys.stderr)
+            print("Test failed: PASV command did not return 530")
             return False
 
         return True
@@ -336,7 +336,7 @@ class TestDele(Test):
         code = self.parse_code(data)
         os.system("rm test.txt -f")
         if code != 250:
-            print("Test failed: DELE command did not return 250", file=sys.stderr)
+            print("Test failed: DELE command did not return 250")
             return False
 
         return True
@@ -354,7 +354,7 @@ class TestDele2(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code != 550:
-            print("Test failed: DELE command did not return 550", file=sys.stderr)
+            print("Test failed: DELE command did not return 550")
             return False
 
         return True
@@ -369,7 +369,7 @@ class TestDele3(Test):
         data = self.recv()
         code = self.parse_code(data)
         if code != 530:
-            print("Test failed: DELE command did not return 530", file=sys.stderr)
+            print("Test failed: DELE command did not return 530")
             return False
 
         return True
@@ -384,7 +384,7 @@ class TestBufferManagment(Test):
         self.send(b"nymous\r\n")
         data = self.recv()
         if self.parse_code(data) != 331:
-            print("Test failed: USER command did not return 331", file=sys.stderr)
+            print("Test failed: USER command did not return 331")
             return False
         return True
 
@@ -415,11 +415,11 @@ class TestPasv(TestPasvABC):
         data = self.recv()
         code = self.parse_code(data)
         if code != 227:
-            print("Test failed: PASV command did not return 227", file=sys.stderr)
+            print("Test failed: PASV command did not return 227")
             return False
         
         if not self.parse_pasv(data):
-            print("Test failed: PASV command did not return a valid address", file=sys.stderr)
+            print("Test failed: PASV command did not return a valid address")
             return False
 
         return True
@@ -433,7 +433,7 @@ class TestPasv2(TestPasvABC):
         data = self.recv()
         code = self.parse_code(data)
         if code != 530:
-            print("Test failed: PASV command did not return 530", file=sys.stderr)
+            print("Test failed: PASV command did not return 530")
             return False
 
         return True
@@ -450,7 +450,7 @@ class TestPasv3(TestPasvABC):
         data = self.recv()
         code = self.parse_code(data)
         if code != 227:
-            print("Test failed: PASV command did not return 227", file=sys.stderr)
+            print("Test failed: PASV command did not return 227")
             return False
         
         try:
@@ -460,7 +460,7 @@ class TestPasv3(TestPasvABC):
             s.close()
 
         except ValueError:
-            print("Test failed: PASV command did not return a valid address", file=sys.stderr)
+            print("Test failed: PASV command did not return a valid address")
             return False
 
         return True
@@ -488,8 +488,10 @@ class TestPort(TestPortABC):
         code = self.parse_code(data)
 
         if code != 200:
-            print("Test failed: PORT command did not return 200", file=sys.stderr)
+            print("Test failed: PORT command did not return 200")
             return False
+        
+        socket.close()
 
         return True
     
@@ -503,7 +505,7 @@ class TestPort2(TestPortABC):
         code = self.parse_code(data)
 
         if code != 530:
-            print("Test failed: PORT command did not return 530", file=sys.stderr)
+            print("Test failed: PORT command did not return 530")
             return False
         
         return True
@@ -521,7 +523,7 @@ class TestPort3(TestPortABC):
         code = self.parse_code(data)
         
         if code != 425:
-            print("Test failed: PORT command did not return 425", file=sys.stderr)
+            print("Test failed: PORT command did not return 425")
             return False
         
         return True

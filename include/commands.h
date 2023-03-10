@@ -27,5 +27,8 @@ void help_command(server_t *, client_t *);
 void dele_command(server_t *, client_t *);
 void pasv_command(server_t *, client_t *);
 void port_command(server_t *, client_t *);
+void retr_command(server_t *, client_t *);
+void stor_command(server_t *, client_t *);
+void list_command(server_t *, client_t *);
 
 void handle_command(server_t *, client_t *);

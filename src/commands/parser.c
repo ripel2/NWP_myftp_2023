@@ -21,6 +21,9 @@ const char *COMMANDS[] = {
     "HELP",
     "DELE",
     "PASV",
+    "RETR",
+    "STOR",
+    "LIST",
     "PORT",
     NULL
 };
@@ -36,7 +39,6 @@ static void (*COMMANDS_FUNCS[])(server_t *server, client_t *client) = {
     &help_command,
     &dele_command,
     &pasv_command,
-    &port_command,
     NULL
 };
 

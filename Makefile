@@ -45,6 +45,9 @@ SRC			=	src/myftp.c	\
 				src/commands/pasv.c	\
 				src/commands/port.c	\
 				src/commands/dele.c	\
+				src/commands/retr.c	\
+				src/commands/stor.c	\
+				src/commands/list.c	\
 
 TESTS		=	tests/tests_arg_check.c	\
 				tests/tests_parser.c	\
