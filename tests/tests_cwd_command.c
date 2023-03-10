@@ -140,7 +140,7 @@ Test(cwd_command, no_args) {
     client.logged_in = true;
     client.buffer_size = 3;
     cwd_command(&server, &client);
-    cr_assert_eq(strncmp(client.queued_message, "501", 3), 0);
+    cr_assert_eq(strncmp(client.queued_message, "550", 3), 0);
 }
 
 Test(cwd_command, no_args_2) {
@@ -155,7 +155,7 @@ Test(cwd_command, no_args_2) {
     client.logged_in = true;
     client.buffer_size = 4;
     cwd_command(&server, &client);
-    cr_assert_eq(strncmp(client.queued_message, "501", 3), 0);
+    cr_assert_eq(strncmp(client.queued_message, "550", 3), 0);
 }
 
 Test(cwd_command, no_args_3) {
