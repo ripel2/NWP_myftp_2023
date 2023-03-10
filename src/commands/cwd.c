@@ -85,8 +85,8 @@ void cwd_inner(server_t *server, client_t *client, int return_code)
     LOG_DEBUG("Client %d sent CWD command", client->fd);
     if (client->buffer[3] == '\0' ||
     (client->buffer[3] == ' ' && client->buffer[4] == '\0')) {
-        client_printf(client, "%d %s.\r\n", 501,
-        "Invalid arguments");
+        client_printf(client, "%d %s.\r\n", 550,
+        "Failed to change directory");
         return;
     }
     if (strcspn(client->buffer + 4, "\r\n\t ") == 0) {
