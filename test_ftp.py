@@ -373,6 +373,20 @@ class TestDele3(Test):
         return True
 
 
+class TestBufferManagment(Test):
+    NAME = "Test USER command splitted in multiple chunks of data"
+
+    def run_test(self) -> bool:
+        self.send(b"US")
+        self.send(b"ER Ano")
+        self.send(b"nymous\r\n")
+        data = self.recv()
+        if self.parse_code(data) != 331:
+            print("Test failed: USER command did not return 331", file=sys.stderr)
+            return False
+        return True
+
+
 TESTS = [
     TestConnection,
     TestUser,
@@ -392,6 +406,7 @@ TESTS = [
     TestDele,
     TestDele2,
     TestDele3,
+    TestBufferManagment,
 ]
 
 
