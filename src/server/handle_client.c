@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <string.h>
 
 static void strip_line_end(client_t *client)
 {
@@ -30,7 +31,9 @@ static void strip_line_end(client_t *client)
 
 static bool read_client_line_finish(client_t *client, ssize_t ret)
 {
-    while (ret == READ_BUFFER_SIZE) {
+    while (ret == READ_BUFFER_SIZE ||
+    (ret > 1 &&
+    strncmp(client->buffer + ret - 2, "\r\n", 2))) {
         client->buffer_size += ret;
         client->buffer = realloc(client->buffer,
         client->buffer_size + READ_BUFFER_SIZE + 1);
