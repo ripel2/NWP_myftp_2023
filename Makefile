@@ -37,6 +37,7 @@ SRC			=	src/myftp.c	\
 				src/commands/login.c	\
 				src/commands/file_utils.c	\
 				src/commands/parser.c	\
+				src/commands/thread_send.c	\
 				src/commands/noop.c	\
 				src/commands/pwd.c	\
 				src/commands/cwd.c	\
@@ -46,9 +47,6 @@ SRC			=	src/myftp.c	\
 				src/commands/port.c	\
 				src/commands/dele.c	\
 				src/commands/retr.c	\
-				src/commands/thread_send.c	\
-				src/commands/retr_active.c	\
-				src/commands/retr_passive.c	\
 				src/commands/stor.c	\
 				src/commands/list.c	\
 
