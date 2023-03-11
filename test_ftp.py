@@ -750,6 +750,103 @@ class TestList4(TestPasvABC):
             return False
 
         return True
+    
+
+class TestStor(TestPasvABC):
+    NAME = "Test STOR command"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227")
+            return False
+        
+        try:
+            ip, port = self.parse_pasv(data)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            self.send_command("STOR ./teststor.txt")
+            data = self.recv()
+            code = self.parse_code(data)
+            if code != 150:
+                print("Test failed: STOR command did not return 150")
+                return False
+            s.send("test".encode())
+            s.close()
+            data = self.recv()
+            code = self.parse_code(data)
+            if code != 226:
+                print("Test failed: STOR command did not return 226 after transfer")
+                return False
+            s.close()
+            with open("./teststor.txt", "r") as f:
+                if f.read() != "test":
+                    print("Test failed: STOR command did not store the file correctly")
+                    return False
+
+            os.remove("./teststor.txt")
+        
+        except ValueError:
+            print("Test failed: PASV command did not return a valid address")
+            return False
+
+        return True
+    
+
+class TestStor2(TestPasvABC):
+    NAME = "Test STOR command without being logged in"
+
+    def run_test(self) -> bool:
+        self.send_command("STOR ./test.txt")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 530:
+            print("Test failed: STOR command did not return 530")
+            return False
+        
+        return True
+    
+
+class TestStor3(TestPasvABC):
+    NAME = "Test STOR command with a directory that does not exist"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227")
+            return False
+        
+        try:
+            ip, port = self.parse_pasv(data)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            self.send_command("STOR /doesntexist/test.txt")
+            data = self.recv() # stor receives 150 first
+            code = self.parse_code(data)
+
+            data = self.recv() # then it receives 550
+            code = self.parse_code(data)
+
+            if code != 550:
+                print("Test failed: STOR command did not return 550")
+                return False
+            s.close()
+        
+        except ValueError:
+            print("Test failed: PASV command did not return a valid address")
+            return False
+
+        return True
 
 TESTS = [
     TestConnection,
@@ -784,6 +881,9 @@ TESTS = [
     TestList2,
     TestList3,
     TestList4,
+    TestStor,
+    TestStor2,
+    TestStor3,
 ]
 
 
