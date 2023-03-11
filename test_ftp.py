@@ -469,8 +469,9 @@ class TestPasv3(TestPasvABC):
 class TestPortABC(Test):
     def start_socket(self, ip, port) -> socket.socket:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((ip, port))
-        s.listen(1)
+        s.listen(10)
         return s
     
 
@@ -617,7 +618,138 @@ class TestRetr3(TestPasvABC):
             return False
 
         return True
+    
 
+class TestList(TestPasvABC):
+    NAME = "Test LIST command"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227")
+            return False
+        
+        try:
+            ip, port = self.parse_pasv(data)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            self.send_command("LIST")
+            data = self.recv()
+            code = self.parse_code(data)
+            if code != 150:
+                print("Test failed: LIST command did not return 150")
+                return False
+            data = s.recv(1024)
+            if "Makefile" not in data.decode():
+                print("Test failed: LIST command did not return some files")
+                return False
+            data = self.recv()
+            code = self.parse_code(data)
+            if code != 226:
+                print("Test failed: LIST command did not return 226 after transfer")
+                return False
+            s.close()
+        
+        except ValueError:
+            print("Test failed: PASV command did not return a valid address")
+            return False
+
+        return True
+    
+
+class TestList2(TestPasvABC):
+    NAME = "Test LIST command without being logged in"
+
+    def run_test(self) -> bool:
+        self.send_command("LIST")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 530:
+            print("Test failed: LIST command did not return 530")
+            return False
+        
+        return True
+    
+
+class TestList3(TestPasvABC):
+    NAME = "Test LIST command with a directory that does not exist"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227")
+            return False
+        
+        try:
+            ip, port = self.parse_pasv(data)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            self.send_command("LIST /doesntexist")
+            data = self.recv()
+            code = self.parse_code(data)
+            data = self.recv()
+            code = self.parse_code(data)
+            if code != 550:
+                print("Test failed: LIST command did not return 550")
+                return False
+            s.close()
+        
+        except ValueError:
+            print("Test failed: PASV command did not return a valid address")
+            return False
+
+        return True
+
+class TestList4(TestPasvABC):
+    NAME = "Test LIST command with a file"
+
+    def run_test(self) -> bool:
+        if not TestPass.run_test(self):
+            return False
+
+        self.send_command("PASV")
+        data = self.recv()
+        code = self.parse_code(data)
+        if code != 227:
+            print("Test failed: PASV command did not return 227")
+            return False
+        
+        try:
+            ip, port = self.parse_pasv(data)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((ip, port))
+            self.send_command("LIST ./Makefile")
+            data = self.recv()
+            code = self.parse_code(data)
+            if code != 150:
+                print("Test failed: LIST command did not return 150")
+                return False
+            data = s.recv(1024)
+            if "Makefile" not in data.decode():
+                print("Test failed: LIST command did not return the file")
+                return False
+            data = self.recv()
+            code = self.parse_code(data)
+            if code != 226:
+                print("Test failed: LIST command did not return 226 after transfer")
+                return False
+            s.close()
+        
+        except ValueError:
+            print("Test failed: PASV command did not return a valid address")
+            return False
+
+        return True
 
 TESTS = [
     TestConnection,
@@ -648,6 +780,10 @@ TESTS = [
     TestRetr,
     TestRetr2,
     TestRetr3,
+    TestList,
+    TestList2,
+    TestList3,
+    TestList4,
 ]
 
 
