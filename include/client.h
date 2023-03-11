@@ -61,6 +61,7 @@ bool add_client(client_list_t *, int fd);
 bool remove_client(client_list_t *, int fd);
 
 ssize_t client_printf(client_t *, const char *, ...);
+void thread_send(client_t *, char *);
 
 void welcome_client(server_t *, client_t *);
 

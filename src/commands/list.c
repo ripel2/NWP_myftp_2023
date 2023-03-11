@@ -17,22 +17,6 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
-static void list_active_thread_send(client_t *client, char *buffer)
-{
-    fd_set write_fds = {0};
-    int ret = 0;
-
-    FD_SET(client->fd, &write_fds);
-    ret = select(client->fd + 1, NULL, &write_fds, NULL, NULL);
-    if (ret < 0) {
-        LOG_ERROR("Select failed");
-        exit(0);
-    }
-    if (FD_ISSET(client->fd, &write_fds)) {
-        write(client->fd, buffer, strlen(buffer));
-    }
-}
-
 static void list_exec_ls_and_pipe(client_t *client, int fd)
 {
     char *args[4] = {"/bin/ls", "-l", NULL, NULL};
@@ -49,11 +33,11 @@ static void list_exec_ls_and_pipe(client_t *client, int fd)
     } else {
         waitpid(pid, &status, 0);
         if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
-            list_active_thread_send(client,
+            thread_send(client,
             "226 Closing data connection, transfer successful.\r\n");
         }
         if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
-            list_active_thread_send(client, "550 Failed to execute ls.\r\n");
+            thread_send(client, "550 Failed to execute ls.\r\n");
     }
 }
 
