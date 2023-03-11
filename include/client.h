@@ -67,5 +67,6 @@ void welcome_client(server_t *, client_t *);
 passive_t *create_passive_socket(void);
 void destroy_passive_socket(passive_t *);
 
+bool connect_active_socket(active_t *);
 active_t *create_active_socket(char *, int);
 void destroy_active_socket(active_t *);

@@ -32,6 +32,23 @@ static active_t *init_active_socket_values(char *ip, int port)
     return active;
 }
 
+bool connect_active_socket(active_t *active)
+{
+    active->fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (active->fd < 0) {
+        LOG_ERROR("socket: %s", strerror(errno));
+        free(active);
+        return false;
+    }
+    if (connect(active->fd, (struct sockaddr *)&active->addr,
+    (socklen_t)active->addr_len) < 0) {
+        LOG_ERROR("connect: %s", strerror(errno));
+        free(active);
+        return false;
+    }
+    return true;
+}
+
 active_t *create_active_socket(char *ip, int port)
 {
     active_t *active = init_active_socket_values(ip, port);
@@ -39,16 +56,7 @@ active_t *create_active_socket(char *ip, int port)
     if (active == NULL) {
         return NULL;
     }
-    active->fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (active->fd < 0) {
-        LOG_ERROR("socket: %s", strerror(errno));
-        free(active);
-        return NULL;
-    }
-    if (connect(active->fd, (struct sockaddr *)&active->addr,
-    (socklen_t)active->addr_len) < 0) {
-        LOG_ERROR("connect: %s", strerror(errno));
-        free(active);
+    if (connect_active_socket(active) == false) {
         return NULL;
     }
     return active;
