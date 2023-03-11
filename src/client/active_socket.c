@@ -46,7 +46,7 @@ active_t *create_active_socket(char *ip, int port)
         return NULL;
     }
     if (connect(active->fd, (struct sockaddr *)&active->addr,
-    active->addr_len) < 0) {
+    (socklen_t)active->addr_len) < 0) {
         LOG_ERROR("connect: %s", strerror(errno));
         free(active);
         return NULL;
