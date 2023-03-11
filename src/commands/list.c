@@ -38,19 +38,22 @@ static void list_exec_ls_and_pipe(client_t *client, int fd)
     char *args[4] = {"/bin/ls", "-l", NULL, NULL};
     int pid = fork();
     int ret = 0;
+    int status = 0;
 
     args[2] = client->buffer_size <= 4 ? client->path : client->buffer + 5;
     if (pid == 0) {
         dup2(fd, 1);
         ret = execve(args[0], args, NULL);
-        if (ret < 0) {
-            LOG_ERROR("Failed to execute ls command");
-            exit(0);
-        }
+        if (ret < 0)
+            exit(2);
     } else {
-        waitpid(pid, NULL, 0);
-        list_active_thread_send(client,
-        "226 Closing data connection, transfer successful.\r\n");
+        waitpid(pid, &status, 0);
+        if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
+            list_active_thread_send(client,
+            "226 Closing data connection, transfer successful.\r\n");
+        }
+        if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+            list_active_thread_send(client, "550 Failed to execute ls.\r\n");
     }
 }
 

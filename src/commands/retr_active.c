@@ -29,7 +29,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-static void retr_active_thread_send(client_t *client, char *buffer)
+static void retr_thread_send(client_t *client, char *buffer)
 {
     fd_set write_fds = {0};
     int ret = 0;
@@ -54,7 +54,7 @@ static void retr_active_transfer(client_t *client, int ns)
 
     if (fd < 0) {
         LOG_ERROR("Failed to open file");
-        retr_active_thread_send(client, "550 Failed to open file.\r\n");
+        retr_thread_send(client, "550 Failed to open file.\r\n");
         exit(0);
     }
     ret = read(fd, buffer, 1024);
@@ -64,7 +64,7 @@ static void retr_active_transfer(client_t *client, int ns)
         ret = read(fd, buffer, 1024);
     }
     close(ns);
-    retr_active_thread_send(client,
+    retr_thread_send(client,
     "226 Closing data connection, file transfer successful.\r\n");
 }
 
@@ -77,7 +77,7 @@ void retr_command_active(server_t *server, client_t *client)
     pid = fork();
     if (pid < 0) {
         LOG_ERROR("Fork failed");
-        retr_active_thread_send(client, "550 Fork failed.\r\n");
+        retr_thread_send(client, "550 Fork failed.\r\n");
         return;
     }
     if (pid == 0) {
