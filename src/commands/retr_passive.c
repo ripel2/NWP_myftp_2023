@@ -51,6 +51,7 @@ static void retr_passive_transfer(client_t *client, int ns)
         memset(buffer, 0, 1024);
         ret = read(fd, buffer, 1024);
     }
+    close(ns);
     retr_active_thread_send(client,
     "226 Closing data connection, file transfer successful.\r\n");
 }
@@ -73,7 +74,8 @@ void retr_command_passive(server_t *server, client_t *client)
         new_socket = accept(passive->fd, (struct sockaddr *)&passive->addr,
         (socklen_t *)&passive->addr_len);
         retr_passive_transfer(client, new_socket);
-        close(new_socket);
+        destroy_passive_socket(passive);
+        client->transfer_socket = NULL;
         exit(0);
     }
 }
