@@ -14,6 +14,9 @@ extern const char *COMMANDS[];
 
 bool path_exists(const char *);
 bool path_is_file(const char *);
+void file_open_error(client_t *);
+void file_transfer_success(client_t *);
+void file_write_error(client_t *);
 
 void user_command(server_t *, client_t *);
 void pass_command(server_t *, client_t *);

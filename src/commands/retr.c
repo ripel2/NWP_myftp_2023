@@ -24,20 +24,17 @@ static void retr_transfer(client_t *client, int ns)
     char buffer[1024] = {0};
     ssize_t ret = 0;
 
-    if (fd < 0) {
-        LOG_ERROR("Failed to open file");
-        thread_send(client, "550 Failed to open file.\r\n");
-        exit(0);
-    }
+    if (fd < 0)
+        file_open_error(client);
     ret = read(fd, buffer, 1024);
     while (ret > 0) {
-        write(ns, buffer, ret);
+        if (write(ns, buffer, ret))
+            file_write_error(client);
         memset(buffer, 0, 1024);
         ret = read(fd, buffer, 1024);
     }
     close(ns);
-    thread_send(client,
-    "226 Closing data connection, file transfer successful.\r\n");
+    file_transfer_success(client);
 }
 
 static void retr_command_active(server_t *server, client_t *client)

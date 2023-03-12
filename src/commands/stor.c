@@ -23,20 +23,17 @@ static void stor_transfer(client_t *client, int ns)
     char buffer[1024] = {0};
     ssize_t ret = 0;
 
-    if (fd < 0) {
-        LOG_ERROR("Failed to open file");
-        thread_send(client, "550 Failed to open file.\r\n");
-        exit(0);
-    }
+    if (fd < 0)
+        file_open_error(client);
     ret = read(ns, buffer, 1024);
     while (ret > 0) {
-        write(fd, buffer, ret);
+        if (write(fd, buffer, ret) < 0)
+            file_write_error(client);
         memset(buffer, 0, 1024);
         ret = read(ns, buffer, 1024);
     }
     close(ns);
-    thread_send(client,
-    "226 Closing data connection, file transfer successful.\r\n");
+    file_transfer_success(client);
 }
 
 static void stor_command_active(client_t *client)
