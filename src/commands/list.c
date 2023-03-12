@@ -17,19 +17,32 @@
 #include <unistd.h>
 #include <sys/wait.h>
 
+static void build_list_command(client_t *client, char **args)
+{
+    char *path = client->buffer_size <= 4 ? client->path : client->buffer + 5;
+    char buf2[8192] = {0};
+
+    if (path[0] == '/')
+        sprintf(buf2, "ls -l %s", path);
+    else
+        sprintf(buf2, "ls -l %s/%s", client->path, path);
+    sprintf(args[2], "%s &>/dev/null && %s 2>&1 | sed 's/$/\\r/'",
+    buf2, buf2);
+}
+
 static void list_exec_ls_and_pipe(client_t *client, int fd)
 {
-    char *args[4] = {"/bin/ls", "-l", NULL, NULL};
+    char arg2buf[8192] = {0};
+    char *args[4] = {"/bin/bash", "-c", arg2buf, NULL};
     int pid = fork();
     int ret = 0;
     int status = 0;
 
-    args[2] = client->buffer_size <= 4 ? client->path : client->buffer + 5;
     if (pid == 0) {
+        build_list_command(client, args);
         dup2(fd, 1);
         ret = execve(args[0], args, NULL);
-        if (ret < 0)
-            exit(2);
+        exit(ret < 0 ? 2 : 0);
     } else {
         waitpid(pid, &status, 0);
         if (WIFEXITED(status) && WEXITSTATUS(status) == 0) {
