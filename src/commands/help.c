@@ -83,7 +83,7 @@ void help_command(server_t *server, client_t *client)
 {
     FD_SET(client->fd, &server->write_fds);
     if (!client->logged_in) {
-        LOG_DEBUG("Client %d sent HELP command while not logged in",
+        LOG_WARNING("Client %d sent HELP command while not logged in",
         client->fd);
         client_printf(client, "%d %s.\r\n", 530, "Not logged in");
         return;

@@ -29,6 +29,7 @@ void thread_send(client_t *client, char *buffer)
         exit(0);
     }
     if (FD_ISSET(client->fd, &write_fds)) {
-        write(client->fd, buffer, strlen(buffer));
+        ret = write(client->fd, buffer, strlen(buffer));
+        LOG_DEBUG("Sent %d bytes to client from forked thread", ret);
     }
 }

@@ -38,12 +38,12 @@ static void cwd_change_dir(client_t *client, char *path, int return_code)
     struct stat st;
 
     if (stat(path, &st) == -1) {
-        LOG_DEBUG("Failed to change directory to %s, stat failed", path);
+        LOG_ERROR("Failed to change directory to %s, stat failed", path);
         client_printf(client, "%d %s.\r\n", 550, "Failed to change directory");
         return;
     }
     if (!S_ISDIR(st.st_mode)) {
-        LOG_DEBUG("Failed to change directory to %s, not a directory", path);
+        LOG_ERROR("Failed to change directory to %s, not a directory", path);
         client_printf(client, "%d %s.\r\n", 550, "Failed to change directory");
         return;
     }
@@ -78,7 +78,8 @@ void cwd_inner(server_t *server, client_t *client, int return_code)
 {
     FD_SET(client->fd, &server->write_fds);
     if (!client->logged_in) {
-        LOG_DEBUG("Client %d sent CWD command while not loged in", client->fd);
+        LOG_ERROR("Client %d sent CWD command while not logged in",
+        client->fd);
         client_printf(client, "%d %s.\r\n", 530, "Not logged in");
         return;
     }

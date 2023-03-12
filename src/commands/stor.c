@@ -85,12 +85,12 @@ void stor_command(server_t *server, client_t *client)
 {
     FD_SET(client->fd, &server->write_fds);
     if (!client->logged_in) {
-        LOG_DEBUG("Client %d tried to STOR without logged in", client->fd);
+        LOG_WARNING("Client %d tried to STOR without logged in", client->fd);
         client_printf(client, "%d %s.\r\n", 530, "Not logged in");
         return;
     }
     if (client->transfer_socket == NULL) {
-        LOG_DEBUG("Client %d tried to STOR without using PORT or PASV first",
+        LOG_ERROR("Client %d tried to STOR without using PORT or PASV first",
         client->fd);
         client_printf(client, "%d %s.\r\n", 425, "Use PORT or PASV first");
         return;

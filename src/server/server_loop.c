@@ -41,7 +41,7 @@ static void select_and_accept(server_t *server)
         &server->addr_len);
     if (new_socket < 0)
         exit_fatal("accept: %s", strerror(errno));
-    LOG_DEBUG("New connection, socket fd: %d, ip: %s, port: %d",
+    LOG_INFO("New connection, socket fd: %d, ip: %s, port: %d",
         new_socket, inet_ntoa(server->addr.sin_addr),
         ntohs(server->addr.sin_port));
     server->max_fd = new_socket;

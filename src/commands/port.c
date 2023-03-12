@@ -26,7 +26,7 @@ static void create_port_struct(client_t *client, int *ip, int *port)
     client->transfer_socket = create_active_socket(ipstr, cport);
     if (client->transfer_socket == NULL) {
         client_printf(client, "%d %s.\r\n", 425, "Can't open data connection");
-        LOG_DEBUG("Client %d can't open data connection, failed", client->fd);
+        LOG_ERROR("Client %d can't open data connection, failed", client->fd);
         return;
     }
     client->transfer_type = ACTIVE;
@@ -39,12 +39,12 @@ static bool port_error_handling(client_t *client)
 {
     if (client->logged_in == false) {
         client_printf(client, "%d %s.\r\n", 530, "Not logged in");
-        LOG_DEBUG("Client %d not logged in", client->fd);
+        LOG_WARNING("Client %d not logged in", client->fd);
         return (false);
     }
     if (client->transfer_socket != NULL) {
         client_printf(client, "%d %s.\r\n", 425, "Can't open data connection");
-        LOG_DEBUG("Client %d can't open data connection, already opened",
+        LOG_ERROR("Client %d can't open data connection, already opened",
         client->fd);
         return (false);
     }
@@ -62,7 +62,7 @@ void port_command(server_t *server, client_t *client)
     if (sscanf(client->buffer, "PORT %d,%d,%d,%d,%d,%d",
     &ip[0], &ip[1], &ip[2], &ip[3], &port[0], &port[1]) != 6) {
         client_printf(client, "%d %s.\r\n", 501, "Invalid arguments");
-        LOG_DEBUG("Client %d sent invalid arguments for PORT command",
+        LOG_ERROR("Client %d sent invalid arguments for PORT command",
         client->fd);
         return;
     }

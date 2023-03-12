@@ -12,5 +12,5 @@ void welcome_client(server_t *server, client_t *client)
 {
     FD_SET(client->fd, &server->write_fds);
     client_printf(client, "%d %s.\r\n", 220, "Service ready for new user");
-    LOG_DEBUG("Client %d has been welcomed", client->fd);
+    LOG_INFO("Client %d has been welcomed", client->fd);
 }

@@ -44,18 +44,18 @@ void pasv_command(server_t *server, client_t *client)
 {
     FD_SET(client->fd, &server->write_fds);
     if (client->logged_in == false) {
-        LOG_DEBUG("Client %d wants to PASV but not logged in", client->fd);
+        LOG_WARNING("Client %d wants to PASV but not logged in", client->fd);
         client_printf(client, "%d %s.\r\n", 530, "Not logged in");
         return;
     }
     if (client->transfer_socket != NULL) {
-        LOG_DEBUG("Client %d already has a socket open", client->fd);
+        LOG_ERROR("Client %d already has a socket open", client->fd);
         client_printf(client, "%d %s.\r\n", 425, "Can't open data connection");
         return;
     }
     client->transfer_socket = create_passive_socket();
     if (client->transfer_socket == NULL) {
-        LOG_DEBUG("Client %d failed to create a socket", client->fd);
+        LOG_ERROR("Client %d failed to create a socket", client->fd);
         client_printf(client, "%d %s.\r\n", 425, "Can't open data connection");
         return;
     }

@@ -103,7 +103,7 @@ void list_command(server_t *server, client_t *client)
 {
     FD_SET(client->fd, &server->write_fds);
     if (!client->logged_in) {
-        LOG_DEBUG("Client %d tried to LIST without logged in", client->fd);
+        LOG_WARNING("Client %d tried to LIST without logged in", client->fd);
         client_printf(client, "%d %s.\r\n", 530, "Not logged in");
         return;
     }

@@ -45,12 +45,12 @@ passive_t *create_passive_socket(void)
         return NULL;
     if (bind(passive->fd, (struct sockaddr *)&passive->addr,
     passive->addr_len) < 0) {
-        LOG_ERROR("bind: %s", strerror(errno));
+        LOG_ERROR("Can't create passive socket, bind: %s", strerror(errno));
         free(passive);
         return NULL;
     }
     if (listen(passive->fd, 1) < 0) {
-        LOG_ERROR("listen: %s", strerror(errno));
+        LOG_ERROR("Can't create passive socket, listen: %s", strerror(errno));
         free(passive);
         return NULL;
     }

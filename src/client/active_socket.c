@@ -36,13 +36,13 @@ bool connect_active_socket(active_t *active)
 {
     active->fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (active->fd < 0) {
-        LOG_ERROR("socket: %s", strerror(errno));
+        LOG_ERROR("Can't create active socket, socket: %s", strerror(errno));
         free(active);
         return false;
     }
     if (connect(active->fd, (struct sockaddr *)&active->addr,
     (socklen_t)active->addr_len) < 0) {
-        LOG_ERROR("connect: %s", strerror(errno));
+        LOG_ERROR("Can't create active socket, connect: %s", strerror(errno));
         free(active);
         return false;
     }
